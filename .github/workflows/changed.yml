@@ -1,16 +1,50 @@
-# PLACEHOLDER until phase 3 of issue 62: this job will dispatch the site's
-# deploy workflow with a GitHub App token. Today it only says what changed.
+# Starts the site deploy after a data change, with a token of the GitHub App
+# eesd-mmw-db-contributions (needs Actions: write on the site repository).
+# - A change on dev (push, ingest, withdraw) redeploys the dev site.
+# - A data-* tag redeploys prod: it reruns the site's newest release tag,
+#   whose build then takes the newest data-* tag.
+# A change on main without a tag deploys nothing: prod changes only by tag.
 name: changed
 
 on:
   workflow_dispatch:
   push:
-    branches: [main, dev]
+    branches: [dev]
+    tags: ['data-*']
+
+concurrency:
+  group: changed-${{ github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
-  changed:
+  deploy-site:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "Data changed on ${{ github.ref_name }} at ${{ github.sha }}."
-          echo "Placeholder: the site deploy is wired in phase 3 (App token dispatch)."
+      - id: token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CONTRIB_APP_ID }}
+          private-key: ${{ secrets.CONTRIB_APP_PRIVATE_KEY }}
+          owner: EPFL-ENAC
+          repositories: eesd-modern-masonry-walls-db
+
+      - name: Start the site deploy
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          SITE: EPFL-ENAC/eesd-modern-masonry-walls-db
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            ref=$(git ls-remote --tags --refs --sort=-v:refname "https://github.com/$SITE.git" 'v*' \
+              | head -n 1 | sed 's#.*refs/tags/##')
+            if [ -z "$ref" ]; then
+              echo "::error::The site has no release tag yet: nothing to deploy to prod."
+              exit 1
+            fi
+          elif [ "$GITHUB_REF_NAME" = dev ]; then
+            ref=dev
+          else
+            echo "No site deploy for $GITHUB_REF_NAME."
+            exit 0
+          fi
+          gh workflow run deploy.yml -R "$SITE" --ref "$ref"
+          echo "Started deploy.yml of $SITE on $ref (data $GITHUB_REF_NAME at $GITHUB_SHA)."

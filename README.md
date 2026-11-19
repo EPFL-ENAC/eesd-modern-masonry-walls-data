@@ -73,10 +73,24 @@ it writes nothing.
 | `ci.yml` | Each pull request and each push to `main` or `dev`. | Runs ruff and the tests. In a pull request, it checks each changed submission. |
 | `ingest.yml` | The merge of a `contrib/*` pull request into `main` or `dev`. | Ingests the submissions of the pull request and pushes the result to the same branch. |
 | `withdraw.yml` | A maintainer, by hand, on `main` or `dev`. The inputs are the numbers and the reason. | Withdraws the numbers and pushes one commit. The reason goes into the commit message. |
-| `changed.yml` | A push to `main` or `dev`, or the ingest and withdraw workflows. | Only shows the branch and the commit for now. Later, it will start the deploy of the site. |
+| `changed.yml` | A push to `dev`, a `data-*` tag, or the ingest and withdraw workflows. | Starts the deploy of the site. A change on `dev` deploys the dev site. A `data-*` tag deploys prod. A change on `main` deploys nothing until you add a tag. |
 | `reset-dev.yml` | A maintainer, by hand. The maintainer must type `reset`. | Resets `dev` to `main`. |
 
 An ingest and a withdrawal on the same branch never run at the same time.
+
+## Release the data to prod
+
+The prod site shows the newest `data-*` tag on `main`. To publish the
+current `main`, tag it with the date. The `changed` workflow then deploys
+prod.
+
+```bash
+git fetch origin
+git tag data-2026-12-01 origin/main
+git push origin data-2026-12-01
+```
+
+If two releases fall on one day, add a letter: `data-2026-12-01b`.
 
 ## License
 
