@@ -1,0 +1,38 @@
+# Withdraws specimens from the dispatched branch: placeholder rows, files
+# deleted, numbers retired. Then starts changed.yml (needs actions: write).
+name: withdraw
+
+on:
+  workflow_dispatch:
+    inputs:
+      numbers:
+        description: Numbers N to withdraw, separated by spaces (for example "238 239")
+        required: true
+      reason:
+        description: Why the data leaves (goes into the commit body)
+        required: true
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: data-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  withdraw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: false
+      - uses: astral-sh/setup-uv@v6
+      - uses: EPFL-ENAC/enacit4r-contrib/withdraw@0.4.0
+        with:
+          target: ${{ inputs.numbers }}
+          reason: ${{ inputs.reason }}
+          base: ${{ github.ref_name }}
+          command: make withdraw N="$TARGET"
+          deploy-workflow: changed.yml
