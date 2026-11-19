@@ -1,0 +1,30 @@
+# Resets dev to main after the tests on the dev site. Started by hand.
+name: reset-dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type "reset" to force-push main to dev
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-dev
+  cancel-in-progress: false
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the confirmation
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: '[ "$CONFIRM" = reset ] || { echo "::error::type reset to confirm"; exit 1; }'
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: false
+      - run: git push --force origin origin/main:dev

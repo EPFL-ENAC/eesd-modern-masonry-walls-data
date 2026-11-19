@@ -1,0 +1,16 @@
+# PLACEHOLDER until phase 3 of issue 62: this job will dispatch the site's
+# deploy workflow with a GitHub App token. Today it only says what changed.
+name: changed
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, dev]
+
+jobs:
+  changed:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Data changed on ${{ github.ref_name }} at ${{ github.sha }}."
+          echo "Placeholder: the site deploy is wired in phase 3 (App token dispatch)."

@@ -45,6 +45,38 @@ git clone git@github.com:EPFL-ENAC/eesd-modern-masonry-walls-data.git
   gives the next free N to each new test and moves its files into `data/`.
 - A correction is a pull request that edits the files in `data/`. A test keeps
   its N forever, and the number of a removed test is not used again.
+- A withdrawal removes tests from the dataset. Each row becomes a placeholder
+  that holds only its N, and the curves and photos of the test are deleted.
+  The withdrawn numbers stay retired: the ingest never gives them again.
+
+## Tools
+
+The tools are a Python package in `tools/` (`mmw_data`). You need
+[uv](https://docs.astral.sh/uv/). Run the targets from the repository root.
+
+| Target | What it does |
+| --- | --- |
+| `make install` | Installs the tools. |
+| `make test` | Runs the tests. |
+| `make lint` | Checks the style of the code with ruff. |
+| `make check SUBMISSION=submissions/<id>` | Checks a submission. It shows each problem. It fails if there is an error. |
+| `make ingest SUBMISSION=submissions/<id>` | Gives the next free N to each test of the submission, moves its files into `data/` and deletes the submission. |
+| `make withdraw N="238 239"` | Withdraws the tests 238 and 239. |
+
+An ingest or a withdrawal checks all the changes first. If one change fails,
+it writes nothing.
+
+## Workflows
+
+| Workflow | Who starts it | What it does |
+| --- | --- | --- |
+| `ci.yml` | Each pull request and each push to `main` or `dev`. | Runs ruff and the tests. In a pull request, it checks each changed submission. |
+| `ingest.yml` | The merge of a `contrib/*` pull request into `main` or `dev`. | Ingests the submissions of the pull request and pushes the result to the same branch. |
+| `withdraw.yml` | A maintainer, by hand, on `main` or `dev`. The inputs are the numbers and the reason. | Withdraws the numbers and pushes one commit. The reason goes into the commit message. |
+| `changed.yml` | A push to `main` or `dev`, or the ingest and withdraw workflows. | Only shows the branch and the commit for now. Later, it will start the deploy of the site. |
+| `reset-dev.yml` | A maintainer, by hand. The maintainer must type `reset`. | Resets `dev` to `main`. |
+
+An ingest and a withdrawal on the same branch never run at the same time.
 
 ## License
 
