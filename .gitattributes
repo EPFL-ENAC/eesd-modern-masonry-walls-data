@@ -1,0 +1,9 @@
+# Specimen photos: git-lfs objects on the ENAC-IT LFS server (.lfsconfig).
+data/07_fig_setup/** filter=lfs diff=lfs merge=lfs -text
+data/08_fig_failmode/** filter=lfs diff=lfs merge=lfs -text
+data/09_fig_materials/** filter=lfs diff=lfs merge=lfs -text
+data/10_fig_cracks/** filter=lfs diff=lfs merge=lfs -text
+# Photos that arrive with a contribution, before the ingest moves them.
+submissions/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+submissions/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+submissions/**/*.png filter=lfs diff=lfs merge=lfs -text
