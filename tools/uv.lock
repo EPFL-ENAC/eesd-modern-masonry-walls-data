@@ -44,8 +44,8 @@ wheels = [
 
 [[package]]
 name = "enacit4r-contrib"
-version = "0.4.0"
-source = { git = "https://github.com/EPFL-ENAC/enacit4r-contrib?tag=0.4.0#377fafca2b84a1299b7cf3ac78ed733cec0100f2" }
+version = "0.6.0"
+source = { git = "https://github.com/EPFL-ENAC/enacit4r-contrib?tag=0.6.0#cac9bf286e6d0090338e8f55dd412449bf9687a4" }
 dependencies = [
     { name = "fastapi" },
     { name = "pydantic" },
@@ -90,7 +90,7 @@ wheels = [
 
 [[package]]
 name = "mmw-data"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "enacit4r-contrib" },
@@ -103,7 +103,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "enacit4r-contrib", git = "https://github.com/EPFL-ENAC/enacit4r-contrib?tag=0.4.0" }]
+requires-dist = [{ name = "enacit4r-contrib", git = "https://github.com/EPFL-ENAC/enacit4r-contrib?tag=0.6.0" }]
 
 [package.metadata.requires-dev]
 dev = [

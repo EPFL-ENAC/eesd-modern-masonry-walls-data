@@ -1,6 +1,6 @@
 [project]
 name = "mmw-data"
-version = "0.1.0"
+version = "0.2.0"
 description = "Check, ingest and withdraw tools for the Modern Masonry Database data"
 requires-python = ">=3.12"
 dependencies = ["enacit4r-contrib"]
@@ -9,7 +9,7 @@ dependencies = ["enacit4r-contrib"]
 dev = ["pytest>=8", "ruff>=0.9"]
 
 [tool.uv.sources]
-enacit4r-contrib = { git = "https://github.com/EPFL-ENAC/enacit4r-contrib", tag = "0.4.0" }
+enacit4r-contrib = { git = "https://github.com/EPFL-ENAC/enacit4r-contrib", tag = "0.6.0" }
 
 [build-system]
 requires = ["hatchling"]
